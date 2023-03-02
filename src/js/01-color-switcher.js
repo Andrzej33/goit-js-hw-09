@@ -7,22 +7,30 @@ const startBtn = document.querySelector('button[data-start]');
 const stopBtn = document.querySelector('button[data-stop]');
 const body = document.querySelector('body');
 
+stopBtn.disabled = true;
+
 let timerId = null;
 
-// console.log(startBtn,stopBtn,document)
+
 
 
 
 
 const start = () => {
+  if (timerId) return;
+  stopBtn.disabled = false;
+  startBtn.disabled = true;
   timerId = setInterval(() => {
-    // const createRandomColor = getRandomHexColor();
+   
     body.style.backgroundColor = getRandomHexColor();
-    
+    console.log('start')
   }, 1000)
 };
 const stop = () => { 
-  clearInterval(timerId)
+  stopBtn.disabled = true;
+  startBtn.disabled = false;
+  clearInterval(timerId);
+  timerId = null;
 };
 
 startBtn.addEventListener('click', start);

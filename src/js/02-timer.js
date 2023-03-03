@@ -1,5 +1,8 @@
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import { Report } from 'notiflix/build/notiflix-report-aio';
+
+// Обєкт з налаштуваннями бібліотеки
 
 const options = {
   enableTime: true,
@@ -7,79 +10,78 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    //   console.log(selectedDates[0]);
-      
-      
-    //   Створення змінних для відображення поточного часу і часу вибраного користувачем в мілісекундах
-      
-      
     const pickedData = selectedDates[0].getTime();
-      // const currentData = Date.now();
 
-
-    //   Перевірка чи вибрана дата в майбутньому
+    //   Перевірка чи вибрана дата знаходитьсся в майбутньому
     if (pickedData > Date.now()) {
-        startBtn.disabled = false;
-        return;
+      refs.startBtn.disabled = false;
+      return;
     }
-      
-      window.alert("Please choose a date in the future")
+
+    Report.failure('Please choose a date in the future');
   },
 };
 
+// Ініціфлізація і створення доступу до бібліотеки flatpickr
 
+flatpickr('#datetime-picker', options);
+const fp = document.querySelector('#datetime-picker')._flatpickr;
 
-flatpickr("#datetime-picker", options);
-const fp = document.querySelector("#datetime-picker")._flatpickr;
-
+// Створення посилань для  нещбхідних елементів
 
 const refs = {
   day: document.querySelector('span[data-days]'),
   hour: document.querySelector('span[data-hours]'),
   minute: document.querySelector('span[data-minutes]'),
   second: document.querySelector('span[data-seconds]'),
-  
-}
+  startBtn: document.querySelector('button[data-start]'),
+  timer: document.querySelector('.timer'),
+};
 
 // Встановлення початкового значення лічильника ш очищення input  при перезавантаженні сторінки
-
 
 let timerId = null;
 fp.clear();
 
+// Додавання стилів до Timer
 
+refs.timer.style.display = 'flex';
+refs.timer.style.marginTop = '20px';
+refs.timer.style.gap = '10px';
+refs.timer.style.backgroundColor = 'rgb(44 205 34)';
+refs.timer.style.width = 'fit-content';
+refs.timer.style.fontSize = 'x-large';
+refs.timer.style.padding = '10px';
+refs.timer.style.borderStyle = 'dotted';
 
+// Встановлення видимості кнопки за замовчуванням
 
+refs.startBtn.disabled = true;
 
-const startBtn = document.querySelector('button[data-start]');
-startBtn.disabled = true;
-// console.log(pickedData,currentData)
+// Додавання слухача подій при запуску таймера і створення функції для обробки кліку
 
-startBtn.addEventListener('click', onTimerClick)
-
+refs.startBtn.addEventListener('click', onTimerClick);
 
 function onTimerClick() {
-startBtn.disabled = true;
-  if (timerId)  return;
+  refs.startBtn.disabled = true;
+  if (timerId) return;
   const futureData = fp.selectedDates[0].getTime();
-  
+
   timerId = setInterval(() => {
     const currentData = Date.now();
     const ms = futureData - currentData;
-    
-     if (ms <= 0)  return;
+
+    if (ms <= 0) return;
     const generalTime = convertMs(ms);
-    changedTimeLeft(generalTime)
+    changedTimeLeft(generalTime);
+  }, 1000);
+}
 
-   },1000)
-  // console.log(5);
- }
-
+// Функція для додавання в інтерфейсі таймера  0, якщо в числі менше двох символів
 
 function addLeadingZero(value) {
-   return String(value).padStart(2,'0')
-};
-//  console.log(addLeadingZero(4))
+  return String(value).padStart(2, '0');
+}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -95,10 +97,14 @@ function convertMs(ms) {
   // Remaining minutes
   const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
   // Remaining seconds
-  const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
+  const seconds = addLeadingZero(
+    Math.floor((((ms % day) % hour) % minute) / second)
+  );
 
   return { days, hours, minutes, seconds };
 }
+
+// Створення функції для виведення таймера в інтерфейс
 
 function changedTimeLeft({ days, hours, minutes, seconds }) {
   refs.day.textContent = `${days}`;

@@ -1,5 +1,4 @@
-
- function getRandomHexColor() {
+function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 }
 
@@ -11,22 +10,16 @@ stopBtn.disabled = true;
 
 let timerId = null;
 
-
-
-
-
-
 const start = () => {
   if (timerId) return;
   stopBtn.disabled = false;
   startBtn.disabled = true;
   timerId = setInterval(() => {
-   
     body.style.backgroundColor = getRandomHexColor();
-    console.log('start')
-  }, 1000)
+    console.log('start');
+  }, 1000);
 };
-const stop = () => { 
+const stop = () => {
   stopBtn.disabled = true;
   startBtn.disabled = false;
   clearInterval(timerId);

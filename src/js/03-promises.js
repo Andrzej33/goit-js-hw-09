@@ -1,84 +1,54 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
+// Ініціалізація налаштувань бібліотеки
+
+Notify.init({ timeout: 4000, position: 'right-bottom', width: '220px' });
+
+// Функція для виклику та повернення промісу
+
 function createPromise(position, delay) {
-  const promise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
-    
+
     setTimeout(() => {
       if (shouldResolve) {
-        resolve({position, delay});
-        // Fulfill
+        resolve({ position, delay });
       } else {
-        reject({position, delay});
-        // Reject
+        reject({ position, delay });
       }
-      //  
     }, delay);
-  })
-  return promise
+  });
 }
-//  const p = createPromise(4,6000)
-// console.log(promise)
 
-// p.then(onSucces).catch(onError)
+// Отримуємо посилання на форму і додаємо мінімальне оформлення
 
 const form = document.querySelector('.form');
+
+form.style.display = 'flex';
+form.style.flexDirection = 'column';
+form.style.alignItems = 'baseline';
+form.style.gap = '10px';
+
+// Додаємо слухача на підписку форми
 
 form.addEventListener('submit', evt => {
   evt.preventDefault();
 
-  for (let i = 0; i < amountDenotation.value; i++) {
-// console.log(stepDenotation.value)
-// console.log(delayDenotation.value)
-    createPromise(i + 1,  stepDenotation.value * i + delayDenotation.value)
-  .then(({ position, delay }) => {
-    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  })
-  .catch(({ position, delay }) => {
-    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-  });
+  // Отримуємо значення з форми
 
+  const delayDenotation = Number(form.delay.value);
+  const stepDenotation = Number(form.step.value);
+  const amountDenotation = form.amount.value;
 
+  // Перебираємо в циклі кількість промісів і створюємо один на кожній ітерації
 
-    
+  for (let i = 0; i < amountDenotation; i++) {
+    createPromise(i + 1, stepDenotation * i + delayDenotation)
+      .then(({ position, delay }) => {
+        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
   }
-  form.reset()
-})
-
-
-const delayDenotation = form.delay;
-const stepDenotation = form.step;
-const amountDenotation = form.amount;
-// const delayDenotation = form.step;
-// console.log(form)
-
-
-
-//  const promise = new Promise((resolve, reject) => {
-//   const shouldResolve = Math.random() > 0.3;
-//     setTimeout(() => {
-//       if (shouldResolve) {
-//         resolve("Success! Value passed to resolve function");
-//         // Fulfill
-//       } else {
-//         reject("Error! Error passed to reject function");
-//         // Reject
-//       }
-//       //  
-//     }, 2000);
-//  })
-  
-
-// promise.then(res => {
-//   console.log(res)
-// }, error => {
-//   console.log(error);
-// }
-// )
-
-
-// function promiseTest(delay) { 
-//   setTimeout(()=>{})
-// }
-
-// function createPromise(amount) {
-  
-// }
+});

@@ -25,6 +25,22 @@ const form = document.querySelector('.form');
 form.addEventListener('submit', evt => {
   evt.preventDefault();
 
+  for (let i = 0; i < amountDenotation.value; i++) {
+// console.log(stepDenotation.value)
+// console.log(delayDenotation.value)
+    createPromise(i + 1,  stepDenotation.value * i + delayDenotation.value)
+  .then(({ position, delay }) => {
+    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+  })
+  .catch(({ position, delay }) => {
+    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+  });
+
+
+
+    
+  }
+  form.reset()
 })
 
 
